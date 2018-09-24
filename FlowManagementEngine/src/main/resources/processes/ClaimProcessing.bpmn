@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_18krihi" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+  <bpmn:process id="claimProcessing" isExecutable="true">
+    <bpmn:startEvent id="StartEvent" name="Start">
+      <bpmn:outgoing>SequenceFlow_0vo2ap9</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0vo2ap9" sourceRef="StartEvent" targetRef="receiveTask1" />
+    <bpmn:exclusiveGateway id="decisionGateway" name="Decision Gateway">
+      <bpmn:incoming>SequenceFlow_0a2qge3</bpmn:incoming>
+      <bpmn:outgoing>decision_finalTask</bpmn:outgoing>
+      <bpmn:outgoing>decision_receiveTask2</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:receiveTask id="finalTask" name="Final Task">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="${baseDelegate}" event="start" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>decision_finalTask</bpmn:incoming>
+      <bpmn:incoming>intermediateToFinal</bpmn:incoming>
+      <bpmn:outgoing>toEnd</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:sequenceFlow id="decision_finalTask" name="Decision Final Task" sourceRef="decisionGateway" targetRef="finalTask">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${value&gt;=100}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:receiveTask id="receiveTaskIntermediate" name="Receive Task Intermediate">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="${baseDelegate}" event="start" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>decision_receiveTask2</bpmn:incoming>
+      <bpmn:outgoing>intermediateToFinal</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:sequenceFlow id="decision_receiveTask2" name="Decision Receive Task" sourceRef="decisionGateway" targetRef="receiveTaskIntermediate">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${value&lt;100}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="intermediateToFinal" name="Intermediate To Final" sourceRef="receiveTaskIntermediate" targetRef="finalTask" />
+    <bpmn:endEvent id="end" name="End">
+      <bpmn:incoming>toEnd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="toEnd" name="To End" sourceRef="finalTask" targetRef="end" />
+    <bpmn:receiveTask id="receiveTask1" name="Receive Task1" messageRef="Message_1stc3nk">
+      <bpmn:extensionElements>
+        <camunda:executionListener delegateExpression="${baseDelegate}" event="start" />
+        <camunda:inputOutput>
+          <camunda:inputParameter name="myInput">hi</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0vo2ap9</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0a2qge3</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0a2qge3" sourceRef="receiveTask1" targetRef="decisionGateway" />
+  </bpmn:process>
+  <bpmn:message id="Message_1stc3nk" name="test" />
+  <bpmn:message id="Message_0iws85w" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="claimProcessing">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="179" y="145" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0vo2ap9_di" bpmnElement="SequenceFlow_0vo2ap9">
+        <di:waypoint x="209" y="120" />
+        <di:waypoint x="314" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0gcjc8x_di" bpmnElement="decisionGateway" isMarkerVisible="true">
+        <dc:Bounds x="512" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="493" y="152" width="90" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReceiveTask_1f5rhb6_di" bpmnElement="finalTask">
+        <dc:Bounds x="769" y="19" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1gquwrb_di" bpmnElement="decision_finalTask">
+        <di:waypoint x="537" y="95" />
+        <di:waypoint x="537" y="59" />
+        <di:waypoint x="769" y="59" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="519" y="74" width="70" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ReceiveTask_0p2lynd_di" bpmnElement="receiveTaskIntermediate">
+        <dc:Bounds x="487" y="316" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0fxkb3m_di" bpmnElement="decision_receiveTask2">
+        <di:waypoint x="537" y="145" />
+        <di:waypoint x="537" y="316" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="510" y="228" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1te2s0f_di" bpmnElement="intermediateToFinal">
+        <di:waypoint x="587" y="356" />
+        <di:waypoint x="819" y="356" />
+        <di:waypoint x="819" y="99" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="666" y="338" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0j8go7t_di" bpmnElement="end">
+        <dc:Bounds x="979" y="41" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="987" y="84" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1yd4wme_di" bpmnElement="toEnd">
+        <di:waypoint x="869" y="59" />
+        <di:waypoint x="979" y="59" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="908" y="41" width="34" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ReceiveTask_05g3upu_di" bpmnElement="receiveTask1">
+        <dc:Bounds x="314" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0a2qge3_di" bpmnElement="SequenceFlow_0a2qge3">
+        <di:waypoint x="414" y="120" />
+        <di:waypoint x="512" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
